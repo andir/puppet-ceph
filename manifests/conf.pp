@@ -29,15 +29,19 @@ class ceph::conf (
   $mon_data        = '/var/lib/ceph/mon/mon.$id',
   $osd_data        = '/var/lib/ceph/osd/osd.$id',
   $osd_journal     = undef,
-  $mds_data        = '/var/lib/ceph/mds/mds.$id'
+  $mds_data        = '/var/lib/ceph/mds/mds.$id',
+  $public_config   = false,
 ) {
 
   include 'ceph::package'
-
-  if $auth_type == 'cephx' {
-    $mode = '0660'
-  } else {
+  if $public_config {
     $mode = '0664'
+  } else {
+    if $auth_type == 'cephx' {
+      $mode = '0660'
+    } else {
+      $mode = '0664'
+    }
   }
 
   if $osd_journal {
