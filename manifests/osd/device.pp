@@ -36,9 +36,9 @@ define ceph::osd::device (
     unless  => "parted ${name} print | egrep '^ 1.*ceph$'",
     require => [Package['parted'], Exec["mktable_gpt_${devname}"]]
   }
-
+  $agcount = $::processorcount * 2
   exec { "mkfs_${devname}":
-    command => "mkfs.xfs -f -d agcount=${::processorcount} -l \
+    command => "mkfs.xfs -f -d agcount=$agcount -l \
 size=1024m -n size=64k ${name}1",
     unless  => "xfs_admin -l ${name}1",
     require => [Package['xfsprogs'], Exec["mkpart_${devname}"]],
